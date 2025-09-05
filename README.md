@@ -1,2 +1,3 @@
-#Official Implementation of Refining Forgery-Aware Prompts for Deepfake Detection with Pattern Blended Samples
+# Official Implementation of Refining Forgery-Aware Prompts for Deepfake Detection with Pattern Blended Samples
+
 Code is coming soon......
