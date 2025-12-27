@@ -1,0 +1,1 @@
+mnnconvert -f ONNX --modelFile ./mnn_model/FAPL_detector.onnx --MNNModel ./mnn_model/FAPL_detector.mnn --bizCode mobilenet --weightQuantBits 8 --optimizePrefer 2
