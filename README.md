@@ -33,7 +33,7 @@ FAPL_code/
 │   ├── mnn_model/       # Place of the MNN file
 │   ├── dataset_infer.py # Dataset inference entry
 │   └── img_infer.py     # Single image inference entry
-└── fig/            # Figure
+└── fig/                 # Figure
 └── README.md            # Code introduction
 ```
 
