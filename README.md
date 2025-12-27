@@ -5,7 +5,7 @@ Samples"
 
 <center>
 <div style="background-color: white; display: table;">
-  <img src="fig/overview.svg" alt="" width="600" />
+  <img src="fig/overview.png" alt="" width="600" />
 </div>
 </center>
 
