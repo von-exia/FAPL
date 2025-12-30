@@ -14,43 +14,6 @@ def set_requires_grad(nets, requires_grad=False):
             for param in net.parameters():
                 param.requires_grad = requires_grad
 
-from torch.autograd import Function
-class GradientReversalFunction(Function):
-    """
-    Gradient Reversal Layer from:
-    Unsupervised Domain Adaptation by Backpropagation (Ganin & Lempitsky, 2015)
-    Forward pass is the identity function. In the backward pass,
-    the upstream gradients are multiplied by -lambda (i.e. gradient is reversed)
-    """
-
-    @staticmethod
-    def forward(ctx, x, lambda_):
-        ctx.lambda_ = lambda_
-        return x.clone()
-
-    @staticmethod
-    def backward(ctx, grads):
-        lambda_ = ctx.lambda_
-        lambda_ = grads.new_tensor(lambda_)
-        dx = -lambda_ * grads
-        return dx, None
-
-
-class GradientReversal(nn.Module):
-    def __init__(self, lambda_=1):
-        super(GradientReversal, self).__init__()
-        self.lambda_ = lambda_
-        self.begin = lambda_
-        self.steps = 1440
-        # self.add_step = 1e-7
-        self.end = 5e-6
-        self.add_step = (self.end - self.begin) / self.steps
-
-    def forward(self, x):
-        if self.lambda_ < self.end:
-            self.lambda_ += self.add_step
-        return GradientReversalFunction.apply(x, self.lambda_)
-
 
 class MLP(nn.Module):
     def __init__(self, embed_dim=512, expand=4):
@@ -112,56 +75,6 @@ class Image_Encoder(nn.Module):
             
         return x, img_tokens
             
-
-# V2    
-# class Image_Encoder(nn.Module):
-#     def __init__(self, clip_model):
-#         super().__init__()
-#         self.visual = clip_model.visual
-#         self.dtype = clip_model.dtype
-        
-#         self.text_linear = nn.Linear(512, 768)
-#         self.text_ln = nn.LayerNorm(768)
-#         self.sa = MHSA(768, 1)
-        
-        
-#         scale = 5 ** -0.5
-#         self.text_position_embed = nn.Parameter(scale * torch.randn(5, 768))
-
-    
-#     def forward(self, x: torch.Tensor,text:torch.Tensor):
-#         x = self.visual.conv1(x)  # shape = [*, width, grid, grid]
-#         x = x.reshape(x.shape[0], x.shape[1], -1)  # shape = [*, width, grid ** 2]
-#         x = x.permute(0, 2, 1)  # shape = [*, grid ** 2, width]
-#         x = torch.cat([self.visual.class_embedding.to(x.dtype) +\
-#             torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype, device=x.device), x], dim=1)  # shape = [*, grid ** 2 + 1, width]
-#         x = x + self.visual.positional_embedding.to(x.dtype)
-#         n = x.shape[0]
-        
-#         tex_res = self.text_linear(text).unsqueeze(0).expand(n, -1, -1) + self.text_position_embed
-#         text = self.sa(self.text_ln(tex_res)) + tex_res
-#         text = text.permute(1, 0, 2)
-#         # x = torch.cat([x, text], dim=1)
-        
-#         x = self.visual.ln_pre(x)
-
-#         x = x.permute(1, 0, 2)  # NLD -> LND
-#         # x = self.visual.transformer(x)
-#         for id, block in enumerate(self.visual.transformer.resblocks):
-#             if id == 10:
-#                 x = torch.cat([x, text], dim=0)
-#             x = block(x)
-#         x = x.permute(1, 0, 2)  # LND -> NLD
-
-#         img_tokens = x[:, 1:, :]
-#         # x = self.visual.ln_post(x[:, 0, :])
-#         x = x[:, 0, :]
-        
-#         if self.visual.proj is not None:
-#             x = x @ self.visual.proj
-            
-            
-#         return x, img_tokens
 
 
 class Text_Encoder(nn.Module):
@@ -360,18 +273,11 @@ class CLIP_Detector(nn.Module):
         self.text_encoder = Prompt_processor(model,
             [
             # Best
-            # "The face image is forged by DeepFake.",
-            # "The face image is forged by FaceSwap.",
-            # "The face image is forged by Face2Face.",
-            # "The face image is forged by NeuralTexture.",
-            # "The face image is forged by Unknown method.",
-            
-            # Best
-            "The face image is forged by DeepFake. In this image, there are several potential signs of forgery that suggest it might be created using deepfake technology:\n\n1. **Skin Texture and Lighting**: The skin appears unusually smooth with an even lighting across the face, which can be a sign of digital manipulation.\n2. **Facial Features**: The eyes seem slightly unnatural in shape or position, possibly indicating digital editing.\n3. **Background Integration**: The background seems to blend poorly with the subject's head, suggesting that the image was edited together from different sources.",
-            "The face image is forged by FaceSwap. In this image, there are several potential clues that suggest it might be a forgery:\n\n1. **Skin Texture and Lighting**: The skin texture appears unusually smooth in certain areas, which can be an indicator of digital manipulation.\n2. **Eyelids and Eyebrows**: The eyelids seem slightly unnatural, possibly indicating that they were digitally altered or added.\n3. **Lips and Teeth**: The lips appear to have a slight sheen or reflection that might not be natural, suggesting digital enhancement.\n4. **Overall Consistency**: There is a noticeable lack of consistency between different facial features, such as the eyes, nose, and mouth, which can be a sign of digital manipulation.",
-            "The face image is forged by Face2Face. The image appears to have several signs of forgery: 1. **Skin Texture and Lighting**: The skin texture looks unnatural, with an overly smooth appearance that is not typical of human skin. Additionally, the lighting seems inconsistent, which can be a sign of digital manipulation.\n\n2. **Facial Features**: The facial features appear exaggerated or distorted in some areas, particularly around the eyes and mouth, which might indicate digital editing.\n\n3. **Background Integration**: The background does not seamlessly integrate with the subject's skin tone and texture, suggesting possible digital compositing issues.",
-            "The face image is forged by NeuralTexture. In this image, there are several potential clues that might indicate it has been forged using NeuralTextures or similar techniques:\n\n1. **Skin Texture**: The skin appears unusually smooth with no visible pores or natural imperfections.\n2. **Lighting and Shadows**: The lighting seems overly uniform, lacking the subtle variations typically seen in natural photographs.\n3. **Facial Features**: The edges of facial features (eyes, nose, mouth) appear slightly unnatural, possibly indicating digital manipulation.\n4. **Background Integration**: The background does not seamlessly integrate with the subject's skin tone and texture.\n\nThese elements suggest that the image may have been digitally altered or created rather than being a photograph of an actual person.",
-            "The face image is forged by Unknown method. X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X",
+            "The face image is forged by DeepFake.",
+            "The face image is forged by FaceSwap.",
+            "The face image is forged by Face2Face.",
+            "The face image is forged by NeuralTexture.",
+            "The face image is forged by Unknown method.",
             ]).cuda()
         
         set_requires_grad(self.text_encoder.text_encoder, False)
