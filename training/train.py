@@ -108,7 +108,7 @@ from adan import Adan
 optimizer = Adan(model.parameters(), lr=1e-5, betas=(0.98, 0.92, 0.99), weight_decay=1e-2, eps=1e-8)
 
 
-Epoch = 300
+Epoch = 35
 step = 0
 step2 = 0
 step_v = 0
