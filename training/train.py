@@ -102,41 +102,10 @@ model = CLIP_Detector(clip_model).cuda()
 # criterion_dict['focal_bce'] = FocalLoss_BCE(alpha=0.25, gamma=2) # V2 second-best
 # criterion_dict['focal_bce'] = FocalLoss_BCE(alpha=[0.8, 0.2], gamma=2) # V2 best
 
-best_auc = 0.8
+best_auc = 0.
 
-max_grad_norm = 5.
-max_grad_norm_head = 5.
-model_params = [
-# {'params': model.text_encoder.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm}, 
-# {'params': model.image_encoder.visual.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-# {'params': model.image_encoder.text_linear.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm}, 
-# {'params': model.decoder.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm}, 
-# {'params': model.type_linear.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-# {'params': model.head1.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-# {'params': model.head2.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-# {'params': model.head3.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-# {'params': model.head4.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-# {'params': model.head.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-# {'params': model.img2tex.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-# {'params': model.q_former.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-
-{'params': model.text_encoder.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm}, 
-{'params': model.image_encoder.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-{'params': model.decoder.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm}, 
-{'params': model.type_linear.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-{'params': model.head1.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-{'params': model.head2.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-{'params': model.head3.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-{'params': model.head4.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-{'params': model.head.parameters(), 'lr': 1e-3, 'weight_decay': 5e-2, 'max_grad_norm':max_grad_norm_head},
-{'params': model.img2tex.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-{'params': model.q_former.parameters(), 'lr': 1e-5, 'weight_decay': 1e-2, 'max_grad_norm':max_grad_norm},
-]
 from adan import Adan
-optimizer = Adan(model_params, betas=(0.98, 0.92, 0.99), eps=1e-8)
-
-# from adan import Adan
-# optimizer = Adan(model.parameters(), lr=1e-5, betas=(0.98, 0.92, 0.99), weight_decay=1e-2, eps=1e-8)
+optimizer = Adan(model.parameters(), lr=1e-5, betas=(0.98, 0.92, 0.99), weight_decay=1e-2, eps=1e-8)
 
 
 Epoch = 300
