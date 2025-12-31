@@ -33,8 +33,8 @@ FAPL_code/
 │   ├── mnn_model/       # Place of the MNN file
 │   ├── dataset_infer.py # Dataset inference entry
 │   └── img_infer.py     # Single image inference entry
-└── fig/                 # Figure
-└── README.md            # Code introduction
+├── fig/                 # Figure
+└── README.md            # Project introduction
 ```
 
 ## 🤖 Pre-trained Weights
@@ -46,7 +46,7 @@ In this link [[Baidu Disk](https://pan.baidu.com/s/11Ci0L7VbOSlpanLdGUDcDA?pwd=8
 
 ## 💪 Training
 
-- The core code for training FALP is located in the `training` folder.
+- The core code for training FAPL is located in the `training` folder.
     - `train.py` implements the entire training stage.
     - `test.py` runs the evaluation process on different datasets.
     - `FFPP_Dataset.py` implements the whole data pipeline during training.
@@ -54,7 +54,7 @@ In this link [[Baidu Disk](https://pan.baidu.com/s/11Ci0L7VbOSlpanLdGUDcDA?pwd=8
 
 - For different datasets, you need to download and preprocess them according to their official websites and the instructions in the [Deepfake Benchmark](https://github.com/SCLBD/DeepfakeBench). Afterwards, update the corresponding file paths in `test_loader.py` (for other datasets). For [DF40](https://github.com/YZY-stack/DF40), you need to using the official test data and code provided on their website. 
 
-## 🔬 Inference
+## 🔬 Deployment & Inference
 
 For a quick start (CPU only), follow these steps:
 
