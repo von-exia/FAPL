@@ -29,7 +29,7 @@ def inference(net, imgpath):
     print("inference time: {:.3f} s".format((ed - st)))
     # 后处理及使用
     predict = output_var[0][0][0]
-    print("output belong to class: {:.4f}".format(predict))
+    print("Fake probability: {:.4f}".format(predict))
 
 # 模型加载
 config = {}
