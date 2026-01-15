@@ -1,6 +1,5 @@
 <h2 align="center">
-Official Implementation of "Refining Forgery-Aware Prompts for Deepfake Detection withPattern Blended
-Samples"
+Official Implementation of "Refining Forgery-Aware Prompts for Deepfake Detection with Pattern Blended Samples"
 </h2>
 
 <center>
