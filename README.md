@@ -41,7 +41,7 @@ FAPL_code/
 In this link [[Baidu Disk](https://pan.baidu.com/s/11Ci0L7VbOSlpanLdGUDcDA?pwd=8g4q)], we provide two versions of the pre-trained weights for FAPL:
 
 1. `FAPL.pth` (550MB): Trained from CLIP ViT-Base (PyTorch).
-2. `FAPL_detector.mnn` (124MB): Int8 quantized model converted from `FAPL.pth` using the [MNN](https://github.com/alibaba/MNN/tree/master) (Mobile Neural Network) framework. This version is recommended for inference and experimenting with FAPL.
+2. `FAPL_detector.mnn` (124MB): Int8 quantified model converted from `FAPL.pth` using the [MNN](https://github.com/alibaba/MNN/tree/master) (Mobile Neural Network) framework. This version is recommended for inference and experimenting with FAPL.
 
 ## 💪 Training
 
